@@ -41,146 +41,26 @@ export function Providers({ children }: { children: React.ReactNode }) {
 }
 
 function Preloader({ done }: { done: boolean }) {
-  const [percent, setPercent] = useState(0);
-  const [currentStep, setCurrentStep] = useState(0);
-
-  const bootSteps = [
-    "LOADING_KERNEL_MODULES",
-    "CHECKING_NETWORK_GATEWAY",
-    "VERIFYING_SEC+_POLICIES",
-    "SYSTEM_READY",
-  ];
-
-  useEffect(() => {
-    // Smooth progress counter from 0 to 100
-    const interval = setInterval(() => {
-      setPercent((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          return 100;
-        }
-        return prev + 1;
-      });
-    }, 12);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  useEffect(() => {
-    // Cycle through diagnostic steps based on completion percentage
-    if (percent < 30) setCurrentStep(0);
-    else if (percent < 60) setCurrentStep(1);
-    else if (percent < 85) setCurrentStep(2);
-    else setCurrentStep(3);
-  }, [percent]);
-
-  const nameText = (profile.name || "Ema Tosin").split("");
-
   return (
     <AnimatePresence>
       {!done && (
         <motion.div
-          key="preloader-overlay"
-          className="fixed inset-0 z-[100] flex flex-col justify-between font-mono text-stone-900 pointer-events-none"
+          key="preloader"
+          className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#FBFBF9] font-sans text-stone-900"
+          initial={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.6, ease: "easeInOut" }}
         >
-          {/* TOP SHUTTER (Slides UP on Exit) */}
           <motion.div
-            className="relative flex flex-1 flex-col justify-end bg-[#F4F4F0] px-6 pb-6 sm:px-12"
-            exit={{ y: "-100%" }}
-            transition={{ duration: 0.85, ease: [0.76, 0, 0.24, 1] }}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="text-center"
           >
-            {/* Edge Blueprint Grid Pattern */}
-            <div
-              aria-hidden
-              className="absolute inset-0 bg-[linear-gradient(to_right,#e7e5e4_1px,transparent_1px),linear-gradient(to_bottom,#e7e5e4_1px,transparent_1px)] bg-[size:3rem_3rem] opacity-60"
-            />
-
-            {/* Top Telemetry Header */}
-            <div className="relative z-10 mb-auto pt-8 flex items-center justify-between text-xs text-stone-500 border-b border-stone-300 pb-4">
-              <div className="flex items-center gap-2 font-bold text-stone-900">
-                <span className="h-2.5 w-2.5 rounded-full bg-blue-600 animate-ping" />
-                <span>SYS_BOOT // V8.04</span>
-              </div>
-              <span>ABUJA_NG // UTC+1</span>
-            </div>
-
-            {/* Kinetic Letter-by-Letter Name Reveal */}
-            <div className="relative z-10 overflow-hidden py-2">
-              <div className="flex items-baseline overflow-hidden font-sans text-[clamp(2.8rem,9vw,7rem)] font-light tracking-tight text-stone-950">
-                {nameText.map((char, i) => (
-                  <motion.span
-                    key={i}
-                    initial={{ y: "120%", rotate: 6 }}
-                    animate={{ y: 0, rotate: 0 }}
-                    transition={{
-                      duration: 0.6,
-                      delay: i * 0.04,
-                      ease: [0.16, 1, 0.3, 1],
-                    }}
-                    className="inline-block"
-                  >
-                    {char === " " ? "\u00A0" : char}
-                  </motion.span>
-                ))}
-                <motion.span
-                  initial={{ opacity: 0, scale: 0 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.5, duration: 0.3 }}
-                  className="text-blue-600 font-mono font-bold text-4xl sm:text-6xl"
-                >
-                  .
-                </motion.span>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* BOTTOM SHUTTER (Slides DOWN on Exit) */}
-          <motion.div
-            className="relative flex flex-1 flex-col justify-between bg-[#F4F4F0] px-6 pt-6 pb-10 sm:px-12"
-            exit={{ y: "100%" }}
-            transition={{ duration: 0.85, ease: [0.76, 0, 0.24, 1] }}
-          >
-            {/* Edge Blueprint Grid Pattern */}
-            <div
-              aria-hidden
-              className="absolute inset-0 bg-[linear-gradient(to_right,#e7e5e4_1px,transparent_1px),linear-gradient(to_bottom,#e7e5e4_1px,transparent_1px)] bg-[size:3rem_3rem] opacity-60"
-            />
-
-            {/* Live Boot Diagnostic Console */}
-            <div className="relative z-10 space-y-2">
-              <div className="flex items-center justify-between text-xs text-stone-500">
-                <AnimatePresence mode="wait">
-                  <motion.span
-                    key={currentStep}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: 10 }}
-                    transition={{ duration: 0.2 }}
-                    className="flex items-center gap-2 font-semibold text-blue-700"
-                  >
-                    <span>&gt;</span> {bootSteps[currentStep]}...
-                  </motion.span>
-                </AnimatePresence>
-
-                <span className="font-bold text-stone-900">{percent}%</span>
-              </div>
-
-              {/* High-Precision Progress Bar Rail */}
-              <div className="h-1.5 w-full overflow-hidden rounded-full bg-stone-300">
-                <motion.div
-                  className="h-full bg-blue-600"
-                  style={{ width: `${percent}%` }}
-                />
-              </div>
-            </div>
-
-            {/* Bottom Status Message */}
-            <div className="relative z-10 mt-auto flex items-center justify-between border-t border-stone-300 pt-4 text-xs text-stone-500">
-              <span className="animate-pulse font-semibold text-stone-700">
-                PLEASE WAIT // PREPARING WORKSPACE
-              </span>
-              <span>SLA: 99.98%</span>
-            </div>
+            <h2 className="text-3xl font-light text-stone-950 sm:text-5xl">
+              {profile.name}
+            </h2>
+            <p className="mt-2 text-sm text-stone-500">IT Support Specialist</p>
           </motion.div>
         </motion.div>
       )}
