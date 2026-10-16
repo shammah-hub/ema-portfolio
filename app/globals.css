@@ -1,26 +1,78 @@
 @import "tailwindcss";
 
+/* ── Colour system ─────────────────────────────────────────────
+   Paper white + deep ink text + ONE accent (periwinkle blue) +
+   a family of soft pastel washes used for cards and glows.
+   Change a value here and the whole site follows. */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --paper: #fbfaf6;
+  --paper-2: #f4f2ec;
+  --ink: #15161c;
+  --ink-2: rgba(21, 22, 28, 0.66);
+  --ink-3: rgba(21, 22, 28, 0.42);
+  --line: rgba(21, 22, 28, 0.09);
+  --line-2: rgba(21, 22, 28, 0.16);
+  --accent: #4f63ff;
+  --accent-soft: #e4e8ff;
+  --p-blue: #e3e8ff;
+  --p-peach: #ffe6d8;
+  --p-mint: #d6f3e4;
+  --p-lilac: #ebe2ff;
+  --p-butter: #fff0c4;
+  --p-rose: #ffdfe7;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-paper: var(--paper);
+  --color-paper-2: var(--paper-2);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-line: var(--line);
+  --color-line-2: var(--line-2);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-p-blue: var(--p-blue);
+  --color-p-peach: var(--p-peach);
+  --color-p-mint: var(--p-mint);
+  --color-p-lilac: var(--p-lilac);
+  --color-p-butter: var(--p-butter);
+  --color-p-rose: var(--p-rose);
+  --font-display: var(--ff-display);
+  --font-sans: var(--ff-body);
+  --font-mono: var(--ff-mono);
+  --font-serif: var(--ff-serif);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+html { background: var(--paper); color-scheme: light; }
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: hidden; }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--ff-body), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
+}
+::selection { background: var(--accent); color: #fff; }
+
+.font-display { font-family: var(--ff-display), system-ui, sans-serif; font-weight: 800; letter-spacing: -0.045em; }
+.font-serif-i { font-family: var(--ff-serif), Georgia, serif; font-style: italic; font-weight: 400; letter-spacing: -0.02em; }
+.eyebrow { font-family: var(--ff-mono), monospace; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); }
+
+@keyframes marquee { to { transform: translateX(-50%); } }
+.marquee-track { animation: marquee 40s linear infinite; }
+.marquee:hover .marquee-track { animation-play-state: paused; }
+@keyframes bob { 0%,100% { transform: translateY(0) rotate(var(--r,0deg)) } 50% { transform: translateY(-12px) rotate(var(--r,0deg)) } }
+@keyframes pulse-dot { 0% { box-shadow: 0 0 0 0 rgba(79,99,255,.45) } 100% { box-shadow: 0 0 0 10px rgba(79,99,255,0) } }
+.pulse-dot { animation: pulse-dot 1.8s ease-out infinite; }
+
+@media (hover: hover) and (pointer: fine) {
+  .has-cursor, .has-cursor a, .has-cursor button { cursor: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track, .pulse-dot { animation: none; }
 }
